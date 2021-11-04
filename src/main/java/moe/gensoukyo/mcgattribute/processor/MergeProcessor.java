@@ -7,12 +7,12 @@ import java.util.HashMap;
 public class MergeProcessor implements IAttributeProcessor {
 
     @Override
-    public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> inputValues) {
+    public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {
         float total = 0;
-        for (float value : inputValues.values()) {
+        for (float value : vars.values()) {
             total += value;
         }
-        inputValues.put("amount", total);
+        vars.put("final", total);
         return false;
     }
 

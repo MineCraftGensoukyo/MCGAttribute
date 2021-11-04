@@ -12,15 +12,15 @@ public class ThornsProcessor implements IAttributeProcessor {
     public static final Random random = new Random();
 
     @Override
-    public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> inputValues) {
+    public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {
         // 处理反弹
         float 反弹量 = 0;
         float p反弹几率 = AttributeCache.getAttributeValue(target, CustomAttributes.反弹几率);
         if (random.nextInt(100) < p反弹几率) {
             float p反弹倍率 = AttributeCache.getAttributeValue(target, CustomAttributes.反弹倍率);
-            float total = inputValues.getOrDefault("amount", 0.0F);
+            float total = vars.getOrDefault("amount", 0.0F);
             反弹量 = total * p反弹倍率;
-            source.setHealth(反弹量);
+            source.setHealth(source.getHealth() - 反弹量); // TODO
         }
         return false;
     }

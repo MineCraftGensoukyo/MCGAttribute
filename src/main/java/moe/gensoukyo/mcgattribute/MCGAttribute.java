@@ -29,14 +29,15 @@ public class MCGAttribute {
         if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
             EntityLivingBase source = (EntityLivingBase) event.getSource().getTrueSource();
             EntityLivingBase target = event.getEntityLiving();
-            HashMap<String, Float> templateValues = new HashMap<>();
-            templateValues.put("amount", event.getAmount());
+            HashMap<String, Float> vars = new HashMap<>();
+            vars.put("input", event.getAmount());
+            vars.put("final", 0.0F);
             for (IAttributeProcessor iAttributeProcessor : ProcessorChains.DAMAGE) {
-                if (iAttributeProcessor.run(source, target, templateValues)){
+                if (iAttributeProcessor.run(source, target, vars)){
                     return;
                 }
             }
-            event.setAmount(templateValues.getOrDefault("amount", event.getAmount()));
+            event.setAmount(vars.getOrDefault("final", event.getAmount()));
         }
     }
 

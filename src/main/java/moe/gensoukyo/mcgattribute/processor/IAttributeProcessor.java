@@ -9,9 +9,9 @@ public interface IAttributeProcessor {
     /**
      * @param source 伤害来源
      * @param target 伤害目标
-     * @param inputValues 输入值
+     * @param vars 输入值
      * @return 是否结束
      */
-    boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> inputValues);
+    boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars);
 
 }

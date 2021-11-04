@@ -1,0 +1,18 @@
+[
+  {
+    "modid": "mcgattribute",
+    "name": "MCGAttribute",
+    "description": "",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "url": "",
+    "updateUrl": "",
+    "authorList": [
+      "SQwatermark"
+    ],
+    "credits": "",
+    "logoFile": "",
+    "screenshots": [],
+    "dependencies": []
+  }
+]

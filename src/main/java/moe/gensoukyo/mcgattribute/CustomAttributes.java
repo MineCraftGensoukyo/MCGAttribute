@@ -32,9 +32,9 @@ public class CustomAttributes {
 
     public static ArrayList<IAttribute> attributeList = new ArrayList<>();
 
-    private static IAttribute registerAttribute(String unlocalizedNameIn) {
+    private static IAttribute registerAttribute(String nameIn) {
         IAttribute attribute = new RangedAttribute(
-                null, unlocalizedNameIn, 0.0, Short.MIN_VALUE, Short.MAX_VALUE);
+                null, nameIn, 0.0, Short.MIN_VALUE, Short.MAX_VALUE);
         attributeList.add(attribute);
         return attribute;
     }

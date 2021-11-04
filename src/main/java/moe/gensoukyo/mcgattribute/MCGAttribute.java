@@ -6,6 +6,8 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.HashMap;
 
@@ -24,6 +26,8 @@ public class MCGAttribute {
     @Mod.Instance(MOD_ID)
     public static MCGAttribute INSTANCE;
 
+    public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+
     @SubscribeEvent
     public static void onLivingDamage(LivingDamageEvent event) {
         if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
@@ -40,5 +44,4 @@ public class MCGAttribute {
             event.setAmount(vars.getOrDefault("final", event.getAmount()));
         }
     }
-
 }

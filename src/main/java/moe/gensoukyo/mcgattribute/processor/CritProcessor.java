@@ -12,7 +12,7 @@ public class CritProcessor extends AbstractAttributeProcessor {
     public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {
         // 处理暴击
         float p暴击几率 = AttributeCache.getAttributeValue(source, BuiltInAttributeNames.CRIT_CHANCE);
-        float p暴击抵抗 = AttributeCache.getAttributeValue(target, BuiltInAttributeNames.暴击抵抗);
+        float p暴击抵抗 = AttributeCache.getAttributeValue(target, BuiltInAttributeNames.CRIT_DEFENCE);
         if (random.nextInt(100) < p暴击几率 - p暴击抵抗) {
             float 暴击倍率 = AttributeCache.getAttributeValue(source, BuiltInAttributeNames.CRIT_MULTIPLIER);
             float total = vars.getOrDefault("final", 0.0F);

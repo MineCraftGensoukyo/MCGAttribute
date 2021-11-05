@@ -3,7 +3,7 @@ package moe.gensoukyo.mcgattribute;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import moe.gensoukyo.mcgattribute.attribute.AttributeMap;
-import moe.gensoukyo.mcgattribute.config.ItemInformation;
+import moe.gensoukyo.mcgattribute.config.TemplateInformation;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -14,6 +14,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.annotation.Nonnull;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.WeakHashMap;
 
 @Mod.EventBusSubscriber(modid = MCGAttribute.MOD_ID)
@@ -23,10 +25,37 @@ public class AttributeCache {
     private static final WeakHashMap<EntityLivingBase, AttributeMap> attributeMapCache = new WeakHashMap<>();
 
     // 当实体的装备变动时，移除移除的物品的属性，增加增加的物品的属性
+    // 理论上装备（自定义）耐久度的变化也会导致此事件，所以基本上就是频繁触发
     @SubscribeEvent
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         AttributeMap map = getOrCreate(event.getEntityLiving());
-        map.applyAttributeModifiers(event.getSlot(), getAttributeModifiers(event.getTo(), event.getSlot()));
+
+        // 排除非CustomAttribute引起的变化
+        boolean attributeChanged = false;
+        ItemStack stackFrom = event.getFrom();
+        ItemStack stackTo = event.getTo();
+        boolean flag1 = stackFrom.hasTagCompound();
+        boolean flag2 = stackTo.hasTagCompound();
+        if (flag1^flag2) {
+            attributeChanged = true; // 一个有一个没有就默认其中一个有CustomAttribute吧
+        } else {
+            if (flag1) {
+                NBTTagCompound compoundFrom = stackFrom.getTagCompound();
+                NBTTagCompound compoundTo = stackFrom.getTagCompound();
+                assert compoundFrom != null;
+                if (compoundFrom.hasKey("CustomAttribute", 10)) {
+                    if (compoundTo.hasKey("CustomAttribute", 10)) {
+                        attributeChanged = !compoundFrom.getCompoundTag("CustomAttribute").equals(compoundTo.getCompoundTag("CustomAttribute"));
+                    } else {
+                        attributeChanged = true;
+                    }
+                }
+            }
+        }
+
+        if (attributeChanged) {
+            map.applySlotAttributes(event.getSlot(), getSlotAttributes(event.getTo(), event.getSlot()));
+        }
     }
 
     // 从实体得到属性，如果缓存里没有就新建一个
@@ -52,50 +81,53 @@ public class AttributeCache {
         return map.getAttributeValue(attribute);
     }
 
-    // 获取ItemStack的属性修饰符
-    private static Multimap<String, Float> getAttributeModifiers(ItemStack itemStack, EntityEquipmentSlot equipmentSlot) {
-        Multimap<String, Float> multimap = HashMultimap.create();
-        if (itemStack.hasTagCompound()) { // 此处要求只读不写，不改变ItemStack本身
-            // 有些地方没对NBT做足检查就直接读取了，可能会崩，还是 try catch 一下吧
-            try {
-                assert itemStack.getTagCompound() != null;
-                if (itemStack.getTagCompound().hasKey("CustomAttribute", 10)) { // 10=NBTTagCompound
-                    NBTTagCompound customAttributeCompound = itemStack.getTagCompound().getCompoundTag("CustomAttribute");
-                    if (customAttributeCompound.hasKey("Type", 8)) { // 8=NBTTagString
-                        String name = customAttributeCompound.getString("Type");
-                        ItemInformation information = ItemInformation.get(name); // 从配置中读取物品信息
-                        if (information != null) {
-                            if (information.getSlot() == equipmentSlot.getSlotIndex()) {
+    @Nonnull
+    private static HashMap<String, Float> getSlotAttributes(ItemStack stack, EntityEquipmentSlot equipmentSlot) {
+        HashMap<String, Float> hashMap = new HashMap<>();
+        if (stack.hasTagCompound()) {
+            assert stack.getTagCompound() != null;
+            if (stack.getTagCompound().hasKey("CustomAttribute", 10)) { // 10=NBTTagCompound
+                NBTTagCompound compound = stack.getTagCompound().getCompoundTag("CustomAttribute");
+                if (compound.hasKey("Type", 8)) { // 8=NBTTagString
+                    String name = compound.getString("Type");
+                    TemplateInformation information = TemplateInformation.get(name); // 从配置中读取物品信息
+                    if (information != null) {
+                        if (information.getSlot() == equipmentSlot.getSlotIndex()) {
 
-                                multimap.putAll(information.getAttributeModifiers());
+                            Multimap<String, Float> multimap = HashMultimap.create();
 
-                                if (customAttributeCompound.hasKey("Unique", 9)) { // 9=NBTTagList
-                                    NBTTagList modifiers = customAttributeCompound.getTagList("Unique", 10); // 10=NBTTagCompound
-                                    for (int i = 0; i < modifiers.tagCount(); ++i) {
-                                        NBTTagCompound modifier = modifiers.getCompoundTagAt(i);
-                                        multimap.put(modifier.getString("AttributeName"), modifier.getFloat("Value"));
+                            multimap.putAll(information.getAttributeModifiers());
+
+                            if (compound.hasKey("Unique", 9)) { // 9=NBTTagList
+                                NBTTagList modifiers = compound.getTagList("Unique", 10);
+                                for (int i = 0; i < modifiers.tagCount(); ++i) {
+                                    NBTTagCompound modifier = modifiers.getCompoundTagAt(i);
+                                    if (modifier.hasKey("AttributeName", 8) && modifier.hasKey("Value", 5)) // 5=NBTTagFloat
+                                    multimap.put(modifier.getString("AttributeName"), modifier.getFloat("Value"));
+                                }
+                            }
+
+                            if (compound.hasKey("Gems", 9)) {
+                                NBTTagList gemsList = compound.getTagList("Gems", 8);
+                                for (int i = 0; i < gemsList.tagCount(); ++i) {
+                                    String gemName = gemsList.getStringTagAt(i);
+                                    TemplateInformation gemInformation = TemplateInformation.get(gemName); // 从配置中读取物品信息
+                                    if (gemInformation != null) {
+                                        multimap.putAll(gemInformation.getAttributeModifiers());
                                     }
                                 }
+                            }
 
-                                if (customAttributeCompound.hasKey("Gems", 9)) {
-                                    NBTTagList gemsList = customAttributeCompound.getTagList("Gems", 8);
-                                    for (int i = 0; i < gemsList.tagCount(); ++i) {
-                                        String gemName = gemsList.getStringTagAt(i);
-                                        ItemInformation gemInformation = ItemInformation.get(gemName); // 从配置中读取物品信息
-                                        if (gemInformation != null) {
-                                            multimap.putAll(gemInformation.getAttributeModifiers());
-                                        }
-                                    }
-                                }
+                            for (Map.Entry<String, Float> entry : multimap.entries()) {
+                                String attributeName = entry.getKey();
+                                hashMap.put(attributeName, hashMap.getOrDefault(attributeName, 0.0F) + entry.getValue());
                             }
                         }
                     }
                 }
-            } catch (Exception e) {
-                MCGAttribute.LOGGER.warn("Unable to load itemstack attributes: {}", e.getMessage());
             }
         }
-        return multimap;
+        return hashMap;
     }
 
 }

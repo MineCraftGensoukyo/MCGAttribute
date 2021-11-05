@@ -4,6 +4,7 @@ import moe.gensoukyo.mcgattribute.chain.ProcessorChains;
 import moe.gensoukyo.mcgattribute.processor.AbstractAttributeProcessor;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
@@ -23,9 +24,6 @@ public class MCGAttribute {
     public static final String MOD_NAME = "MCGAttribute";
     public static final String VERSION = "1.0-SNAPSHOT";
 
-    @Mod.Instance(MOD_ID)
-    public static MCGAttribute INSTANCE;
-
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
     @SubscribeEvent
@@ -43,5 +41,10 @@ public class MCGAttribute {
             }
             event.setAmount(vars.getOrDefault("final", event.getAmount()));
         }
+    }
+
+    @SubscribeEvent
+    public static void onItemTooltip(ItemTooltipEvent event) {
+
     }
 }

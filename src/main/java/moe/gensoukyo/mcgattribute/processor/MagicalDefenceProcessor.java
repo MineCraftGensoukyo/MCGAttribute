@@ -12,9 +12,9 @@ public class MagicalDefenceProcessor extends AbstractAttributeProcessor {
     public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {
         float magic_amount = vars.getOrDefault("magical", 0.0F);
         // 处理魔抗和魔防
-        float p魔法抗性 = AttributeCache.getAttributeValue(target, BuiltInAttributeNames.魔法抗性);
+        float p魔法抗性 = AttributeCache.getAttributeValue(target, BuiltInAttributeNames.MAGICAL_DEFENCE);
         magic_amount *= 1 - p魔法抗性 / 100;
-        float p魔法防御 = AttributeCache.getAttributeValue(target, BuiltInAttributeNames.魔法防御);
+        float p魔法防御 = AttributeCache.getAttributeValue(target, BuiltInAttributeNames.MAGICAL_MINUS);
         magic_amount -= p魔法防御;
         if (magic_amount < 0) magic_amount = 0; // 防止防御过高反而加血
         vars.put("magical", magic_amount);

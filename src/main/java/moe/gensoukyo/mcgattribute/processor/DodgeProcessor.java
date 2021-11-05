@@ -10,8 +10,8 @@ public class DodgeProcessor extends AbstractAttributeProcessor {
 
     @Override
     public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {
-        float p闪避几率 = AttributeCache.getAttributeValue(target, BuiltInAttributeNames.闪避几率);
-        float p命中几率 = AttributeCache.getAttributeValue(source, BuiltInAttributeNames.命中几率);
+        float p闪避几率 = AttributeCache.getAttributeValue(target, BuiltInAttributeNames.DODGE_CHANCE);
+        float p命中几率 = AttributeCache.getAttributeValue(source, BuiltInAttributeNames.HIT_CHANCE);
         if (random.nextInt(100) < p闪避几率 - p命中几率) {
             vars.put("final", 0.0F);
             return true;

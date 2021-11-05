@@ -1,12 +1,11 @@
 package moe.gensoukyo.mcgattribute.attribute;
 
-import com.google.common.collect.Multimap;
 import net.minecraft.inventory.EntityEquipmentSlot;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class AttributeMap {
+public final class AttributeMap {
 
     private final HashMap<EntityEquipmentSlot, HashMap<String, Float>> slotAttributeMaps;
     private final HashMap<String, Float> totalAttributeMap;
@@ -37,12 +36,8 @@ public class AttributeMap {
         return totalAttributeMap.getOrDefault(attributeName, defaultValue);
     }
 
-    public void applyAttributeModifiers(EntityEquipmentSlot slot, Multimap<String, Float> modifiers) {
-        HashMap<String, Float> slotAttributes = slotAttributeMaps.get(slot);
-        for (Map.Entry<String, Float> entry : modifiers.entries()) {
-            String attributeName = entry.getKey();
-            slotAttributes.put(attributeName, slotAttributes.getOrDefault(attributeName, 0.0F) + entry.getValue());
-        }
+    public void applySlotAttributes(EntityEquipmentSlot slot, HashMap<String, Float> modifiers) {
+        slotAttributeMaps.put(slot, modifiers);
         shouldRecalculate = true;
     }
 

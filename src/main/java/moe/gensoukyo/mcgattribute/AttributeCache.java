@@ -45,14 +45,21 @@ public class AttributeCache {
                 assert compoundFrom != null;
                 if (compoundFrom.hasKey("CustomAttribute", 10)) {
                     if (compoundTo.hasKey("CustomAttribute", 10)) {
-                        attributeChanged = !compoundFrom.getCompoundTag("CustomAttribute").equals(compoundTo.getCompoundTag("CustomAttribute"));
+                        NBTTagCompound attrFrom = stackFrom.getTagCompound();
+                        NBTTagCompound attrTo = stackFrom.getTagCompound();
+                        if (attrFrom.hasKey("Information", 10)) {
+                            if (attrTo.hasKey("Information", 10)) {
+                                attributeChanged = !attrFrom.getCompoundTag("Information").equals(attrTo.getCompoundTag("Information"));
+                            } else {
+                                attributeChanged = true;
+                            }
+                        }
                     } else {
                         attributeChanged = true;
                     }
                 }
             }
         }
-
         if (attributeChanged) {
             map.applySlotAttributes(event.getSlot(), getSlotAttributes(event.getTo(), event.getSlot()));
         }
@@ -87,44 +94,55 @@ public class AttributeCache {
         if (stack.hasTagCompound()) {
             assert stack.getTagCompound() != null;
             if (stack.getTagCompound().hasKey("CustomAttribute", 10)) { // 10=NBTTagCompound
-                NBTTagCompound compound = stack.getTagCompound().getCompoundTag("CustomAttribute");
-                if (compound.hasKey("Type", 8)) { // 8=NBTTagString
-                    String name = compound.getString("Type");
-                    TemplateInformation information = TemplateInformation.get(name); // 从配置中读取物品信息
-                    if (information != null) {
-                        if (information.getSlot() == equipmentSlot.getSlotIndex()) {
+                NBTTagCompound topCompound = stack.getTagCompound().getCompoundTag("CustomAttribute");
 
-                            Multimap<String, Float> multimap = HashMultimap.create();
+                if (topCompound.hasKey("Information", 10)) {
+                    NBTTagCompound informationCompound = stack.getTagCompound().getCompoundTag("Information");
 
-                            multimap.putAll(information.getAttributeModifiers());
+                    if (informationCompound.hasKey("Type", 8)) { // 8=NBTTagString
+                        String name = informationCompound.getString("Type");
+                        TemplateInformation information = TemplateInformation.get(name); // 从配置中读取物品信息
+                        if (information != null) {
 
-                            if (compound.hasKey("Unique", 9)) { // 9=NBTTagList
-                                NBTTagList modifiers = compound.getTagList("Unique", 10);
-                                for (int i = 0; i < modifiers.tagCount(); ++i) {
-                                    NBTTagCompound modifier = modifiers.getCompoundTagAt(i);
-                                    if (modifier.hasKey("AttributeName", 8) && modifier.hasKey("Value", 5)) // 5=NBTTagFloat
-                                    multimap.put(modifier.getString("AttributeName"), modifier.getFloat("Value"));
-                                }
-                            }
+                            if (information.getSlot() == equipmentSlot.getSlotIndex()) {
+                                Multimap<String, Float> multimap = HashMultimap.create();
+                                multimap.putAll(information.getAttributeModifiers());
 
-                            if (compound.hasKey("Gems", 9)) {
-                                NBTTagList gemsList = compound.getTagList("Gems", 8);
-                                for (int i = 0; i < gemsList.tagCount(); ++i) {
-                                    String gemName = gemsList.getStringTagAt(i);
-                                    TemplateInformation gemInformation = TemplateInformation.get(gemName); // 从配置中读取物品信息
-                                    if (gemInformation != null) {
-                                        multimap.putAll(gemInformation.getAttributeModifiers());
+                                if (informationCompound.hasKey("Unique", 10)) {
+                                    NBTTagCompound uniqueCompound = informationCompound.getCompoundTag("Unique");
+                                    for (String s : uniqueCompound.getKeySet()) {
+                                        if (uniqueCompound.hasKey(s, 5)) {
+                                            multimap.put(s, uniqueCompound.getFloat(s));
+                                        }
                                     }
                                 }
-                            }
 
-                            for (Map.Entry<String, Float> entry : multimap.entries()) {
-                                String attributeName = entry.getKey();
-                                hashMap.put(attributeName, hashMap.getOrDefault(attributeName, 0.0F) + entry.getValue());
+                                if (informationCompound.hasKey("Gems", 9)) { // 9=NBTTagList
+                                    NBTTagList gemsList = informationCompound.getTagList("Gems", 8);
+                                    for (int i = 0; i < gemsList.tagCount(); i++) {
+                                        String gemName = gemsList.getStringTagAt(i);
+                                        TemplateInformation gemInformation = TemplateInformation.get(gemName); // 从配置中读取物品信息
+                                        if (gemInformation != null) {
+                                            multimap.putAll(gemInformation.getAttributeModifiers());
+                                        }
+                                    }
+                                }
+
+                                for (Map.Entry<String, Float> entry : multimap.entries()) {
+                                    String attributeName = entry.getKey();
+                                    hashMap.put(attributeName, hashMap.getOrDefault(attributeName, 0.0F) + entry.getValue());
+                                }
                             }
                         }
+                        // 给客户端读取数据用的
+                        NBTTagCompound list = new NBTTagCompound();
+                        for (Map.Entry<String, Float> entry : hashMap.entrySet()) {
+                            list.setFloat(entry.getKey(), entry.getValue());
+                        }
+                        topCompound.setTag("Cached", list);
                     }
                 }
+
             }
         }
         return hashMap;

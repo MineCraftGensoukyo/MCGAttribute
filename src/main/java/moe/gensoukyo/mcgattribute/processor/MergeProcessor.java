@@ -4,7 +4,7 @@ import net.minecraft.entity.EntityLivingBase;
 
 import java.util.HashMap;
 
-public class MergeProcessor implements IAttributeProcessor {
+public class MergeProcessor extends AbstractAttributeProcessor {
 
     @Override
     public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class ProcessorChains {
 
-    public static ArrayList<IAttributeProcessor> DAMAGE = new ArrayList<>();
+    public static ArrayList<AbstractAttributeProcessor> DAMAGE = new ArrayList<>();
 
     static {
         DAMAGE.add(new DodgeProcessor()); // 闪避
@@ -24,4 +24,5 @@ public class ProcessorChains {
         DAMAGE.add(new LifeStealProcessor()); // 吸血
         DAMAGE.add(new ThornsProcessor()); // 反伤
     }
+
 }

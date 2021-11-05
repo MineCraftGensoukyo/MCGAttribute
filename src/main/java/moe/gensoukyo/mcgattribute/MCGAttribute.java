@@ -1,9 +1,9 @@
 package moe.gensoukyo.mcgattribute;
 
 import moe.gensoukyo.mcgattribute.chain.ProcessorChains;
-import moe.gensoukyo.mcgattribute.processor.IAttributeProcessor;
+import moe.gensoukyo.mcgattribute.processor.AbstractAttributeProcessor;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraftforge.event.entity.living.LivingDamageEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
@@ -29,14 +29,14 @@ public class MCGAttribute {
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
 
     @SubscribeEvent
-    public static void onLivingDamage(LivingDamageEvent event) {
+    public static void onLivingHurt(LivingHurtEvent event) {
         if (event.getSource().getTrueSource() instanceof EntityLivingBase) {
             EntityLivingBase source = (EntityLivingBase) event.getSource().getTrueSource();
             EntityLivingBase target = event.getEntityLiving();
             HashMap<String, Float> vars = new HashMap<>();
             vars.put("input", event.getAmount());
             vars.put("final", 0.0F);
-            for (IAttributeProcessor iAttributeProcessor : ProcessorChains.DAMAGE) {
+            for (AbstractAttributeProcessor iAttributeProcessor : ProcessorChains.DAMAGE) {
                 if (iAttributeProcessor.run(source, target, vars)){
                     return;
                 }

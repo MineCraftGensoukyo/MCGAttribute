@@ -17,6 +17,7 @@ public abstract class AbstractProcessor {
      */
     public abstract boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars);
 
+    // 奇奇怪怪的伪单例
     @Override
     public boolean equals(Object obj) {
         return this.getClass() == obj.getClass();

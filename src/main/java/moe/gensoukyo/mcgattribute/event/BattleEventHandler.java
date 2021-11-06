@@ -5,6 +5,7 @@ import moe.gensoukyo.mcgattribute.MCGAttribute;
 import moe.gensoukyo.mcgattribute.attribute.EnumAttributeType;
 import moe.gensoukyo.mcgattribute.chain.ProcessorChains;
 import moe.gensoukyo.mcgattribute.processor.AbstractProcessor;
+import moe.gensoukyo.mcgattribute.processor.MergeProcessor;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -35,7 +36,7 @@ public class BattleEventHandler {
             // 奇奇怪怪的排序方法 TODO 改进
             ArrayList<AbstractProcessor> sortedProcessors = new ArrayList<>();
             for (AbstractProcessor abstractProcessor : ProcessorChains.DAMAGE) {
-                if (processors.contains(abstractProcessor)) {
+                if (processors.contains(abstractProcessor) || abstractProcessor instanceof MergeProcessor) {
                     sortedProcessors.add(abstractProcessor);
                 }
             }

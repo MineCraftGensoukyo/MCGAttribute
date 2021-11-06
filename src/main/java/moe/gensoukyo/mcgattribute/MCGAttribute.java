@@ -1,6 +1,7 @@
 package moe.gensoukyo.mcgattribute;
 
 import moe.gensoukyo.mcgattribute.chain.ProcessorChains;
+import moe.gensoukyo.mcgattribute.config.ModConfig;
 import moe.gensoukyo.mcgattribute.processor.AbstractAttributeProcessor;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
@@ -25,6 +26,10 @@ public class MCGAttribute {
     public static final String VERSION = "1.0-SNAPSHOT";
 
     public static final Logger LOGGER = LogManager.getLogger(MOD_ID);
+
+    static {
+        ModConfig.reloadAll();
+    }
 
     @SubscribeEvent
     public static void onLivingHurt(LivingHurtEvent event) {

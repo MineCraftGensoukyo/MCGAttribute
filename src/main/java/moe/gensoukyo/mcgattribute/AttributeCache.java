@@ -3,7 +3,8 @@ package moe.gensoukyo.mcgattribute;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import moe.gensoukyo.mcgattribute.attribute.AttributeMap;
-import moe.gensoukyo.mcgattribute.config.TemplateInformation;
+import moe.gensoukyo.mcgattribute.config.ItemInfo;
+import moe.gensoukyo.mcgattribute.config.ModConfig;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemStack;
@@ -101,12 +102,13 @@ public class AttributeCache {
 
                     if (informationCompound.hasKey("Type", 8)) { // 8=NBTTagString
                         String name = informationCompound.getString("Type");
-                        TemplateInformation information = TemplateInformation.get(name); // 从配置中读取物品信息
+                        ItemInfo information = ModConfig.getItemInfo(name); // 从配置中读取物品信息
                         if (information != null) {
-
                             if (information.getSlot() == equipmentSlot.getSlotIndex()) {
                                 Multimap<String, Float> multimap = HashMultimap.create();
-                                multimap.putAll(information.getAttributeModifiers());
+                                for (Map.Entry<String, Float> entry : information.getAttributeModifiers().entrySet()) {
+                                    multimap.put(entry.getKey(), entry.getValue());
+                                }
 
                                 if (informationCompound.hasKey("Unique", 10)) {
                                     NBTTagCompound uniqueCompound = informationCompound.getCompoundTag("Unique");
@@ -121,9 +123,11 @@ public class AttributeCache {
                                     NBTTagList gemsList = informationCompound.getTagList("Gems", 8);
                                     for (int i = 0; i < gemsList.tagCount(); i++) {
                                         String gemName = gemsList.getStringTagAt(i);
-                                        TemplateInformation gemInformation = TemplateInformation.get(gemName); // 从配置中读取物品信息
+                                        ItemInfo gemInformation = ModConfig.getItemInfo(gemName); // 从配置中读取物品信息
                                         if (gemInformation != null) {
-                                            multimap.putAll(gemInformation.getAttributeModifiers());
+                                            for (Map.Entry<String, Float> entry : gemInformation.getAttributeModifiers().entrySet()) {
+                                                multimap.put(entry.getKey(), entry.getValue());
+                                            }
                                         }
                                     }
                                 }

@@ -6,7 +6,7 @@ import net.minecraft.entity.EntityLivingBase;
 
 import java.util.HashMap;
 
-public class MagicalDamageProcessor extends AbstractAttributeProcessor {
+public class MagicalDamageProcessor extends AbstractProcessor {
 
     @Override
     public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {
@@ -16,7 +16,7 @@ public class MagicalDamageProcessor extends AbstractAttributeProcessor {
         // 伤害加成
         float p魔法增幅 = AttributeCache.getAttributeValue(source, BuiltInAttributeNames.MAGICAL_MULTIPLIER);
         vars.put("magical", (magic_amount + p魔法伤害) * (1 + p魔法增幅));
-        return false;
+        return true;
     }
 
 }

@@ -89,6 +89,7 @@ public class AttributeCache {
         return map.getAttributeValue(attribute);
     }
 
+    // TODO 完全需要重写
     @Nonnull
     private static HashMap<String, Float> getSlotAttributes(ItemStack stack, EntityEquipmentSlot equipmentSlot) {
         HashMap<String, Float> hashMap = new HashMap<>();

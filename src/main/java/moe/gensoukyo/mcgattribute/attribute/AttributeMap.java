@@ -1,7 +1,9 @@
 package moe.gensoukyo.mcgattribute.attribute;
 
+import moe.gensoukyo.mcgattribute.processor.AbstractProcessor;
 import net.minecraft.inventory.EntityEquipmentSlot;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,14 +11,19 @@ public final class AttributeMap {
 
     private final HashMap<EntityEquipmentSlot, HashMap<String, Float>> slotAttributeMaps;
     private final HashMap<String, Float> totalAttributeMap;
+    private final HashMap<EnumAttributeType, ArrayList<AbstractProcessor>> processors;
 
     private boolean shouldRecalculate;
 
     public AttributeMap() {
         slotAttributeMaps = new HashMap<>();
         totalAttributeMap = new HashMap<>();
+        processors = new HashMap<>();
         for (EntityEquipmentSlot slot : EntityEquipmentSlot.values()) {
             slotAttributeMaps.put(slot, new HashMap<>());
+        }
+        for (EnumAttributeType value : EnumAttributeType.values()) {
+            processors.put(value, new ArrayList<>());
         }
     }
 
@@ -49,5 +56,18 @@ public final class AttributeMap {
                 totalAttributeMap.put(attributeName, totalAttributeMap.getOrDefault(attributeName, 0.0F) + entry.getValue());
             }
         }
+        for (String s : totalAttributeMap.keySet()) {
+            AttributeInfo info = AttributeInfo.get(s);
+            ArrayList<AbstractProcessor> originalProcessors = processors.get(info.getType());
+            for (AbstractProcessor processor : info.getProcessors()) {
+                if (!originalProcessors.contains(processor)) {
+                    originalProcessors.add(processor);
+                }
+            }
+        }
+    }
+
+    public ArrayList<AbstractProcessor> getProcessors(EnumAttributeType type) {
+        return processors.get(type);
     }
 }

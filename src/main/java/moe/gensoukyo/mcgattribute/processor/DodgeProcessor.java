@@ -6,7 +6,7 @@ import net.minecraft.entity.EntityLivingBase;
 
 import java.util.HashMap;
 
-public class DodgeProcessor extends AbstractAttributeProcessor {
+public class DodgeProcessor extends AbstractProcessor {
 
     @Override
     public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {
@@ -14,9 +14,9 @@ public class DodgeProcessor extends AbstractAttributeProcessor {
         float p命中几率 = AttributeCache.getAttributeValue(source, BuiltInAttributeNames.HIT_CHANCE);
         if (random.nextInt(100) < p闪避几率 - p命中几率) {
             vars.put("final", 0.0F);
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
     }
 

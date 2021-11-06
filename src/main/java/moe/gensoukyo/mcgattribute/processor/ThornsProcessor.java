@@ -6,7 +6,7 @@ import net.minecraft.entity.EntityLivingBase;
 
 import java.util.HashMap;
 
-public class ThornsProcessor extends AbstractAttributeProcessor {
+public class ThornsProcessor extends AbstractProcessor {
 
     @Override
     public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {
@@ -19,6 +19,6 @@ public class ThornsProcessor extends AbstractAttributeProcessor {
             反弹量 = total * p反弹倍率;
             source.setHealth(source.getHealth() - 反弹量); // TODO
         }
-        return false;
+        return true;
     }
 }

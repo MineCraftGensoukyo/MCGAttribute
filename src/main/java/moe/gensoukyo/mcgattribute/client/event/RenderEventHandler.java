@@ -1,4 +1,4 @@
-package moe.gensoukyo.mcgattribute.client;
+package moe.gensoukyo.mcgattribute.client.event;
 
 import moe.gensoukyo.mcgattribute.MCGAttribute;
 import net.minecraft.item.ItemStack;
@@ -13,7 +13,7 @@ import java.util.List;
 
 @Mod.EventBusSubscriber(modid = MCGAttribute.MOD_ID, value = Side.CLIENT)
 @SideOnly(Side.CLIENT)
-public class TooltipEventHandler {
+public class RenderEventHandler {
 
     @SubscribeEvent
     public static void onItemTooltip(ItemTooltipEvent event) {

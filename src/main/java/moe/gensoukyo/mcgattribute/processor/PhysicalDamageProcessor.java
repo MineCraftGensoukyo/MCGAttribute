@@ -6,7 +6,7 @@ import net.minecraft.entity.EntityLivingBase;
 
 import java.util.HashMap;
 
-public class PhysicalDamageProcessor extends AbstractAttributeProcessor {
+public class PhysicalDamageProcessor extends AbstractProcessor {
 
     @Override
     public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {
@@ -17,7 +17,7 @@ public class PhysicalDamageProcessor extends AbstractAttributeProcessor {
         // 伤害加成
         float p物理增幅 = AttributeCache.getAttributeValue(source, BuiltInAttributeNames.PHYSICAL_MULTIPLIER);
         vars.put("physical", (physics_amount + p物理伤害) * (1 + p物理增幅));
-        return false;
+        return true;
     }
 
 }

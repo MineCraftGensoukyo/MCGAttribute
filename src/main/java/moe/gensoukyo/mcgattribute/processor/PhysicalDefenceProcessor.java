@@ -6,7 +6,7 @@ import net.minecraft.entity.EntityLivingBase;
 
 import java.util.HashMap;
 
-public class PhysicalDefenceProcessor extends AbstractAttributeProcessor {
+public class PhysicalDefenceProcessor extends AbstractProcessor {
 
     @Override
     public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {
@@ -23,7 +23,7 @@ public class PhysicalDefenceProcessor extends AbstractAttributeProcessor {
             if (physics_amount < 0) physics_amount = 0; // 防止护甲或者防御过高反而加血
         }
         vars.put("physical", physics_amount);
-        return false;
+        return true;
     }
 
 }

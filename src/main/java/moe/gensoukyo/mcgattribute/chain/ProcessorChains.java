@@ -2,11 +2,11 @@ package moe.gensoukyo.mcgattribute.chain;
 
 import moe.gensoukyo.mcgattribute.processor.*;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 
 public class ProcessorChains {
 
-    public static ArrayList<AbstractAttributeProcessor> DAMAGE = new ArrayList<>();
+    public static LinkedList<AbstractProcessor> DAMAGE = new LinkedList<>();
 
     static {
         DAMAGE.add(new DodgeProcessor()); // 闪避

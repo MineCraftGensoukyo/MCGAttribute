@@ -6,7 +6,7 @@ import net.minecraft.entity.EntityLivingBase;
 
 import java.util.HashMap;
 
-public class CritProcessor extends AbstractAttributeProcessor {
+public class CritProcessor extends AbstractProcessor {
 
     @Override
     public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {
@@ -19,6 +19,6 @@ public class CritProcessor extends AbstractAttributeProcessor {
             total = total * (1 + 暴击倍率);
             vars.put("final", total);
         }
-        return false;
+        return true;
     }
 }

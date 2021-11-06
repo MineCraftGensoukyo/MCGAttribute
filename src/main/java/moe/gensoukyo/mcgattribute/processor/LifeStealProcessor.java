@@ -6,7 +6,7 @@ import net.minecraft.entity.EntityLivingBase;
 
 import java.util.HashMap;
 
-public class LifeStealProcessor extends AbstractAttributeProcessor {
+public class LifeStealProcessor extends AbstractProcessor {
 
     @Override
     public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {
@@ -19,7 +19,7 @@ public class LifeStealProcessor extends AbstractAttributeProcessor {
             float 吸血量 = total * p吸血倍率;
             source.heal(吸血量);
         }
-        return false;
+        return true;
     }
 
 }

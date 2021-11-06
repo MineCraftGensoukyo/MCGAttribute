@@ -6,7 +6,7 @@ import net.minecraft.entity.EntityLivingBase;
 
 import java.util.HashMap;
 
-public class MagicalDefenceProcessor extends AbstractAttributeProcessor {
+public class MagicalDefenceProcessor extends AbstractProcessor {
 
     @Override
     public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {
@@ -18,7 +18,7 @@ public class MagicalDefenceProcessor extends AbstractAttributeProcessor {
         magic_amount -= p魔法防御;
         if (magic_amount < 0) magic_amount = 0; // 防止防御过高反而加血
         vars.put("magical", magic_amount);
-        return false;
+        return true;
     }
 
 }

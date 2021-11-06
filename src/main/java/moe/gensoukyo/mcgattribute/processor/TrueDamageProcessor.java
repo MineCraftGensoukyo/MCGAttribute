@@ -10,7 +10,7 @@ public class TrueDamageProcessor extends AbstractProcessor {
 
     @Override
     public boolean run(EntityLivingBase source, EntityLivingBase target, HashMap<String, Float> vars) {
-        vars.put("true", AttributeCache.getAttributeValue(source, BuiltInAttributeNames.TRUE_DAMAGE));
+        vars.put("true", vars.getOrDefault("true", 0.0F) + AttributeCache.getAttributeValue(source, BuiltInAttributeNames.TRUE_DAMAGE));
         return true;
     }
 

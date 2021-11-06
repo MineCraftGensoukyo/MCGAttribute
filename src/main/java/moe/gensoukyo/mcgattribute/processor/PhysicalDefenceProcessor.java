@@ -17,10 +17,13 @@ public class PhysicalDefenceProcessor extends AbstractProcessor {
             float p护甲穿透 = AttributeCache.getAttributeValue(source, BuiltInAttributeNames.PHYSICAL_DEFENCE_MINUS);
             float p物理护甲 = AttributeCache.getAttributeValue(target, BuiltInAttributeNames.PHYSICAL_DEFENCE);
             physics_amount *= 1 - Math.max(p物理护甲 - p护甲穿透, 0) / 100; // 不能穿到负数
-            // 处理物理防御，PVP防御和PVE防御都共用这个属性
+
             float p物理防御 = AttributeCache.getAttributeValue(target, BuiltInAttributeNames.PHYSICAL_MINUS);
             physics_amount -= p物理防御;
             if (physics_amount < 0) physics_amount = 0; // 防止护甲或者防御过高反而加血
+        } else {
+            vars.put("true", vars.getOrDefault("true", 0.0F) + physics_amount);
+            vars.put("physical", 0.0F);
         }
         vars.put("physical", physics_amount);
         return true;

@@ -59,11 +59,10 @@ public final class AttributeMap {
         for (String s : totalAttributeMap.keySet()) {
             AttributeInfo info = AttributeInfo.get(s);
             ArrayList<AbstractProcessor> originalProcessors = processors.get(info.getType());
-            for (AbstractProcessor processor : info.getProcessors()) {
-                if (!originalProcessors.contains(processor)) {
-                    originalProcessors.add(processor);
-                }
+            if (!originalProcessors.contains(info.getProcessor())) {
+                originalProcessors.add(info.getProcessor());
             }
+
         }
     }
 
